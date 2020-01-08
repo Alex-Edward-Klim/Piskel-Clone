@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="./src/normalize.css">
+  <link rel="stylesheet" href="./src/style.css">
+  <title>Piskel-Clone</title>
+  <script type="text/javascript" src="./src/jsgif/LZWEncoder.js"></script>
+  <script type="text/javascript" src="./src/jsgif/NeuQuant.js"></script>
+  <script type="text/javascript" src="./src/jsgif/GIFEncoder.js"></script>
+  <script type="text/javascript" src="./src/jsgif/b64.js"></script>
+</head>
+<body>
+  <header class="header">
+    <nav class="navigation">
+      <a class="header__link" href="">
+        <img class="logo" src="./src/images/logo_transparent_small_compact.png" alt="Piskel Logo">
+      </a>
+      <span class="piskel-name">New Piskel</span>
+      <div class="header__button-container">
+        <button class="header__button">Create Sprite</button>
+        <button class="header__button">Sign in</button>
+      </div>
+    </nav>
+  </header>
+  <main class="main">
+    <section class="tools">
+      <div class="tools__pen-size-container">
+        <button class="tools__btn-1 tools__active-pen-size-button"></button>
+        <button class="tools__btn-2"></button>
+        <button class="tools__btn-3"></button>
+        <button class="tools__btn-4"></button>
+      </div>
+      <div class="tools__button-container">
+        <button class="tools__tool-button tools__pen tools__active-button"></button>
+        <button class="tools__tool-button tools__paint-bucket"></button>
+        <button class="tools__tool-button tools__paint-all-pixels-of-the-same-color"></button>
+        <button class="tools__tool-button tools__eraser"></button>
+        <button class="tools__tool-button tools__stroke"></button>
+        <button class="tools__tool-button tools__color-picker"></button>
+      </div>
+      <div class="tools__primary-secondary-color-wrapper">
+        <button class="tools__primary-color-button"></button>
+        <button class="tools__secondary-color-button"></button>
+        <button class="tools__swap-colors-button"></button>
+      </div>
+      <input class="tools__primary-color-input" type="color">
+      <input class="tools__secondary-color-input" type="color">
+    </section>
+    <section class="frames">
+      <div class="frames__single-frame-wrapper frames__active-frame">
+        <img class="frame frame-1" src="" alt="" width=96 height=96>
+        <button class="frames__delete-frame-button"><img class="frames__delete-frame-image" src="./src/images/delete_frame.png" alt="delete frame button"></button>
+      </div>
+      <button class="frames__create-new-frame-button"><img src="./src/images/new_frame.png">Add new frame</button>
+    </section>
+    <section class="canvas-wrapper">
+      <canvas class="canvas canvas-1" height="512" width="512">Your browser doesn't support canvas!</canvas>
+    </section>
+    <section class="output-and-options">
+      <div class="output">
+        <img class="output__final-gif" src="" alt="">
+      </div>
+      <p class="output__warning">
+        !!! WARNING !!! Real GIF is used!
+        <br>
+        In order NOT to slow your system down,
+        <br>
+        please, refresh animation MANUALLY!
+      </p>
+      <button class="output__refresh-button header__button">Refresh Sprite</button>
+      <button class="output__download-button header__button">Download GIF</button>
+      <div class="output__fps">
+        <p class="output__fps-number"><span class="output__fps-figure">2</span> FPS</p>
+        <input class="output__fps-input" type="range" min="1" max="24" value="2">
+        <p class="output__fps-warning">Click<br>REFRESH!!!</p>
+      </div>
+    </section>
+  </main>
+
+  <script src="./dist/bundle.js"></script>
+</body>
+</html>
