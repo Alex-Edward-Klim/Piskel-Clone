@@ -167,7 +167,7 @@ const palette = {
     bresenDraw(xStart, yStart, xEnd, yEnd);
   },
 
-  fillBucket(event, matrixCoefficient, /* !!! */ canvas, canvasContext) {
+  fillBucket(event, matrixCoefficient, canvas, canvasContext) {
 
     if (event.button === 0) {
       canvasContext.fillStyle = palette.primaryColor;
@@ -204,7 +204,7 @@ const palette = {
       const seventhNeighbour = getPixelColor(x, y + k);
 
       if (secondNeighbour) {
-        if (JSON.stringify(secondNeighbour) === pixelRgbaColor) {
+        if (JSON.stringify(secondNeighbour) === pixelRgbaColor || JSON.stringify(secondNeighbour) === '[85,85,85,255]' || JSON.stringify(secondNeighbour) === '[76,76,76,255]') {
           const neighbourCoordinates = `[${x},${y - k}]`;
           if (!visited[neighbourCoordinates]) {
             stack.push(neighbourCoordinates);
@@ -214,7 +214,7 @@ const palette = {
       }
 
       if (fourthNeighbour) {
-        if (JSON.stringify(fourthNeighbour) === pixelRgbaColor) {
+        if (JSON.stringify(fourthNeighbour) === pixelRgbaColor || JSON.stringify(fourthNeighbour) === '[85,85,85,255]' || JSON.stringify(fourthNeighbour) === '[76,76,76,255]') {
           const neighbourCoordinates = `[${x - k},${y}]`;
           if (!visited[neighbourCoordinates]) {
             stack.push(neighbourCoordinates);
@@ -224,7 +224,7 @@ const palette = {
       }
 
       if (fifthNeighbour) {
-        if (JSON.stringify(fifthNeighbour) === pixelRgbaColor) {
+        if (JSON.stringify(fifthNeighbour) === pixelRgbaColor || JSON.stringify(fifthNeighbour) === '[85,85,85,255]' || JSON.stringify(fifthNeighbour) === '[76,76,76,255]') {
           const neighbourCoordinates = `[${x + k},${y}]`;
           if (!visited[neighbourCoordinates]) {
             stack.push(neighbourCoordinates);
@@ -234,7 +234,7 @@ const palette = {
       }
 
       if (seventhNeighbour) {
-        if (JSON.stringify(seventhNeighbour) === pixelRgbaColor) {
+        if (JSON.stringify(seventhNeighbour) === pixelRgbaColor || JSON.stringify(seventhNeighbour) === '[85,85,85,255]' || JSON.stringify(seventhNeighbour) === '[76,76,76,255]') {
           const neighbourCoordinates = `[${x},${y + k}]`;
           if (!visited[neighbourCoordinates]) {
             stack.push(neighbourCoordinates);
@@ -256,6 +256,32 @@ const palette = {
     }
 
     floodFill(event.offsetX - ((event.offsetX) % k), event.offsetY - ((event.offsetY) % k));
+  },
+
+  paintAllPixelsOfTheSameColor(event, matrixCoefficient, canvas, canvasContext) {
+
+    if (event.button === 0) {
+      canvasContext.fillStyle = palette.primaryColor;
+    } else {
+      canvasContext.fillStyle = palette.secondaryColor;
+    }
+
+    const k = matrixCoefficient;
+
+    const pixelImgData = canvasContext.getImageData(event.offsetX, event.offsetY, 1, 1);
+    const pixelRgbaColor = Array.from(pixelImgData.data);
+
+    const imgData = canvasContext.getImageData(0, 0, canvas.width, canvas.height);
+    const canvasColorArr = imgData.data;
+
+    for (let i = 0; i < canvasColorArr.length; i = i + 512 * k * 4) {
+      for (let j = i; j < (i + 512) * 4; j += k * 4) {
+        if (pixelRgbaColor[0] === canvasColorArr[j] && pixelRgbaColor[1] === canvasColorArr[j + 1] && pixelRgbaColor[2] === canvasColorArr[j + 2] && pixelRgbaColor[3] === canvasColorArr[j + 3]) {
+          canvasContext.fillRect(((j / 4) % 512), Math.floor((j / 4) / 512), k, k);
+        }
+      }
+    }
+
   },
 
   rgba2hex(rgba) {
@@ -373,7 +399,7 @@ function canvasAddEventListeners(canvas) {
   
       palette.xStart = event.offsetX - ((event.offsetX) % palette.matrixCoefficient);
       palette.yStart = event.offsetY - ((event.offsetY) % palette.matrixCoefficient);
-      palette.drawBresenhamLine(palette.activeCanvasContext, palette.xStart, palette.yStart, /////////////////////
+      palette.drawBresenhamLine(palette.activeCanvasContext, palette.xStart, palette.yStart,
         palette.xStart, palette.yStart,
         palette.matrixCoefficient);
     }
@@ -381,7 +407,7 @@ function canvasAddEventListeners(canvas) {
     if (palette.tool === 'eraser') {
       palette.xStart = event.offsetX - ((event.offsetX) % palette.matrixCoefficient);
       palette.yStart = event.offsetY - ((event.offsetY) % palette.matrixCoefficient);
-      palette.clearBresenhamLine(palette.activeCanvasContext, palette.xStart, palette.yStart, //////////////////////////////////
+      palette.clearBresenhamLine(palette.activeCanvasContext, palette.xStart, palette.yStart,
         palette.xStart, palette.yStart,
         palette.matrixCoefficient);
     }
@@ -407,12 +433,17 @@ function canvasAddEventListeners(canvas) {
         }
       }
     }
+
+    if (palette.tool === 'paintAllPixelsOfTheSameColor') {
+      palette.paintAllPixelsOfTheSameColor(event, palette.matrixCoefficient, palette.activeCanvas, palette.activeCanvasContext);
+    }
+
   });
   
   canvas.addEventListener('mousemove', (event) => {
     if (palette.tool === 'pen') {
       if (palette.isDrawing) {
-        palette.drawBresenhamLine(palette.activeCanvasContext, palette.xStart, palette.yStart, //////////////////////////
+        palette.drawBresenhamLine(palette.activeCanvasContext, palette.xStart, palette.yStart,
           event.offsetX - ((event.offsetX) % palette.matrixCoefficient),
           event.offsetY - ((event.offsetY) % palette.matrixCoefficient),
           palette.matrixCoefficient);
@@ -423,7 +454,7 @@ function canvasAddEventListeners(canvas) {
   
     if (palette.tool === 'eraser') {
       if (palette.isDrawing) {
-        palette.clearBresenhamLine(palette.activeCanvasContext, palette.xStart, palette.yStart, /////////////////////////
+        palette.clearBresenhamLine(palette.activeCanvasContext, palette.xStart, palette.yStart,
           event.offsetX - ((event.offsetX) % palette.matrixCoefficient),
           event.offsetY - ((event.offsetY) % palette.matrixCoefficient),
           palette.matrixCoefficient);
